@@ -11,13 +11,13 @@ const AuthReducer = (state = initialState, action) => {
                 return {
                     ...state,
                     isLoggedIn : true,
+                    userInfo : payload.userInfo,
                     authInfo: payload.authInfo,
-                    userInfo : payload.userInfo
                 }
             case actionKeys.SET_USER_DATA : 
                 return {
                     ...state,
-                    userInfo : payload.userInfo,
+                    userInfo : {...state.userInfo, ...payload.userInfo},
                     isLoggedIn : true
                 }
 

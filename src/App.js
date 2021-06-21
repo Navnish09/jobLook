@@ -1,19 +1,22 @@
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
 import routes from "./common/routes";
-import { Alert } from "@material-ui/lab";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useLayoutEffect } from "react";
-import { hideAlert } from "./redux/actionCreators/alertActions";
-import PrivateRoute from "./components/PrivateRoute";
-import PublicRoute from "./components/PublicRoute";
-import { setUserData } from "./redux/actionCreators/authActions";
+import { hideAlert } from "./redux/actionCreators/alertActionsCreator";
+import PublicRoute from "./common/PublicRoute";
+import { setUserData } from "./redux/actionCreators/authActionsCreator";
+import Listing from "./pages/Listing";
+import EmployerPlace from "./pages/EmployerPlace";
+import RoleBasedRoute from "./components/RoleBasedRoutes";
+import Main from "./pages/Main";
+import StyledAlert from "./components/StyledComponents/StyledAlert";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   const alert = useSelector(state => state.alert);
-  const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
@@ -27,22 +30,32 @@ const App = () => {
       }
     }, 2000)
   })
+
   return (
     <>
       {alert.isRequired &&
-        <Alert variant="filled" severity={alert.alertType} style={{ width: '20%', position: "absolute", "right": '8%', top: '5%' }}>
+        <StyledAlert variant="filled" severity={alert.alertType}>
           {alert.message}
-        </Alert>
+        </StyledAlert>
       }
 
     <Router>
       <Switch>
-          <PrivateRoute exact path={routes.root} component={Dashboard} />
+      
+          {/* <Route exact path={routes.root} component={Main} /> */}
+          
+          <PublicRoute exact path={routes.root} component={Login} restricted={true} />
 
-          <PublicRoute path={routes.login} component={Login} restricted={true}  />
+          <RoleBasedRoute path={routes.dashboard} component={Dashboard} allow="freelancer" />
 
           <PublicRoute path={routes.signup} component={Signup} restricted={true} />
 
+          <PublicRoute path={routes.reset_password} component={ResetPassword} restricted={true} />
+
+          <RoleBasedRoute path={routes.listing} component={Listing} allow="employer" />
+
+          <RoleBasedRoute path={routes.employerPlace} component={EmployerPlace} allow="employer" />
+          
       </Switch>
     </Router>
     </>

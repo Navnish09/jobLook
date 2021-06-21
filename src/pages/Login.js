@@ -5,16 +5,18 @@ import {
     TextField,
     Button,
     Grid,
-    CircularProgress
+    CircularProgress,
+    FormHelperText
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import FormOuter from "../components/FormOuter";
 import routes from "../common/routes";
 import { memo, useRef, useState} from "react";
 import { getRefsValue } from "../common/polyfills";
 import { useDispatch } from "react-redux";
-import {errorAlert} from "../redux/actionCreators/alertActions"
-import { loginWithGoogle, signInUser } from "../redux/actionCreators/authActions";
+import { errorAlert } from "../redux/actionCreators/alertActionsCreator"
+import { loginWithGoogle, signInUser } from "../redux/actionCreators/authActionsCreator";
+import StyledLink from "../components/StyledComponents/StyledLink";
 
 const styles = makeStyles((theme) => ({
     heading: {
@@ -39,6 +41,7 @@ const Login = () => {
     const [passwordMsg, setPasswordMsg] = useState(null);
     const [loading, setLoading] = useState(false);
     const [gLoading, setgLoading] = useState(false);
+    const history = useHistory();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,13 +50,15 @@ const Login = () => {
 
         const [email, password] = getRefsValue(emailRef, passwordRef);
         let userData;
-       
+
         if(!email || !password){
+
             (!email) ? setEmailMsg("Email can't be empty") : setEmailMsg(null);
             (!password) ? setPasswordMsg("Password can't be empty"): setPasswordMsg(null);
+
         }else{
-            setLoading(true);
-            userData = await signInUser(dispatch, { email, password }).catch(err => {
+                setLoading(true);
+                userData = await signInUser(dispatch, { email, password }).catch(err => {
 
                 switch (err.code) {
                     case 'auth/invalid-email' :
@@ -66,7 +71,7 @@ const Login = () => {
                         setEmailMsg(null);
                         setPasswordMsg("Invalid Password");
                         break;
-                        
+
                     case 'auth/popup-closed-by-user':
                         errorAlert(dispatch, "Connection closed");
                         break;
@@ -77,15 +82,20 @@ const Login = () => {
             });
         }
 
+        // if(userData){
+        //     debugger;
+        //     (userData.role === "employer") ? history.push('/employerPlace') : history.push('/dashboard')
+        // }
+
         setLoading(false);
     }
 
 
     const handleGoogleLogin = async () => {
         setgLoading(true);
-
+        let userData;
         try {
-            await loginWithGoogle(dispatch);
+            userData= await loginWithGoogle(dispatch);
         } catch (error) {
             switch (error.code) {
                 case "auth/email-not-registered":
@@ -99,7 +109,13 @@ const Login = () => {
                     break;
             }
         }
+
+        // if (userData) {
+        //     (userData.role === "employer") ? history.push('/employerPlace') : history.push('/dashboard')
+        // }
+
         setgLoading(false);
+
     }
 
     return (
@@ -114,6 +130,9 @@ const Login = () => {
                 <br />
                 <FormControl fullWidth={true} margin="normal">
                     <TextField label="Password" error={passwordMsg ? true : false} type="password" inputRef={passwordRef} helperText={passwordMsg}  />
+                    <StyledLink to={routes.reset_password} $underline={true}>
+                        <FormHelperText style={{textAlign:"right", fontWeight:'500'}}>Forgot Password?</FormHelperText>
+                    </StyledLink>
                 </FormControl>
 
                 <br />
@@ -153,4 +172,4 @@ const Login = () => {
     )
 }
 
-export default memo(Login);
+export default Login;

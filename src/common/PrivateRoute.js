@@ -6,8 +6,9 @@ import { Route, Redirect } from "react-router";
     return (
         // Show the component only when the user is logged in
         // Otherwise, redirect the user to /signin page
+        
         <Route {...rest} render={props => (
-            isTokenAvailable() ?
+            isTokenAvailable()  ?
                 <Component {...props} />
                 : <Redirect to="/login" />
         )} />

@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { useSelector } from "react-redux";
 import { Box, CircularProgress, makeStyles } from "@material-ui/core";
-import DashboardMain from "../components/dashboardMain";
-
+import DashboardLayout from "../components/DashboardLayout";
+import { Redirect, Switch, Route } from "react-router-dom";
+import Profile from "./Profile";
 const styles = makeStyles(() => ({
     box : {
         position : "absolute",
@@ -15,19 +16,18 @@ const styles = makeStyles(() => ({
 const Dashboard = () => {
     const classes = styles();
     const auth = useSelector(state => state.auth);
-
+    
     return ( 
         <>
         {auth.isLoggedIn ? 
             <>
-                <DashboardMain />
+                <DashboardLayout />
             </>
             :
             <Box component="div" className={classes.box}>
                 <CircularProgress size={25} thickness={5} color="primary" />
             </Box>
         }
-            
         </>
      );
 }

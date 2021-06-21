@@ -9,9 +9,10 @@ import {
 } from "@material-ui/core";
 import { useRef, useState, memo } from "react";
 import { Link } from "react-router-dom";
-import { registerUser } from "../redux/actionCreators/authActions";
+import { registerUser } from "../redux/actionCreators/authActionsCreator";
 import { getRefsValue } from "../common/polyfills";
 import { useDispatch } from "react-redux";
+import routes from "../common/routes";
 
 const styles = makeStyles((theme) => ({
 
@@ -34,9 +35,11 @@ const SignupForm = ({setSelectRole}) => {
     const [emailErr, setEmailErr] = useState('');
     const [nameErr, setNameErr] = useState('');
     const [phoneErr, setPhoneErr] = useState('');
+    const [passwordErr, setPasswordErr] = useState('');
     const nameRef = useRef('');
     const emailRef = useRef('');
     const phoneRef = useRef('');
+    const passwordRef = useRef('');
     const classes = styles();
     const disptach = useDispatch();
     
@@ -44,29 +47,32 @@ const SignupForm = ({setSelectRole}) => {
         nameRef.current.value = ''
         emailRef.current.value = ''
         phoneRef.current.value = ''
+        passwordRef.current.value = ''
     }
 
     const resetErrors = () => {
         setEmailErr('');
         setNameErr('');
         setPhoneErr('');
+        setPasswordErr('');
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         resetErrors();
-        const [name, email, phone] = getRefsValue(nameRef, emailRef, phoneRef);
+        const [name, email, phone, password] = getRefsValue(nameRef, emailRef, phoneRef, passwordRef);
 
         if(!name || !email || !phone){
             (!name) ? setNameErr('Name can not be empty') : setNameErr('');
             (!email) ? setEmailErr('Email can not be empty') : setEmailErr('');
             (!phone) ? setPhoneErr('Phone can not be empty') : setPhoneErr('');
+            (!password) ? setPasswordErr('Phone can not be empty') : setPasswordErr('');
         }else{
             setLoading(true);
 
             try {
                 
-                await registerUser(disptach, { name, email, phone });
+                await registerUser(disptach, email, password, { name, phone });
                 resetForm();
                 setSelectRole(true)
                 
@@ -100,12 +106,15 @@ const SignupForm = ({setSelectRole}) => {
                 </FormControl>
                 <FormControl fullWidth={true} margin="normal">
                     <TextField label="Email" inputRef={emailRef} error={emailErr ? true : false} helperText={emailErr}  color="secondary" />
-                    <FormHelperText></FormHelperText>
                 </FormControl>
                 <FormControl fullWidth={true} margin="normal">
                     <TextField label="Phone" inputRef={phoneRef} error={phoneErr ? true : false} helperText={phoneErr} color="secondary" />
-                    <FormHelperText></FormHelperText>
                 </FormControl>
+
+                <FormControl fullWidth={true} margin="normal">
+                    <TextField label="Password" type="password" inputRef={passwordRef} error={passwordErr ? true : false} helperText={passwordErr} color="secondary" />
+                </FormControl>
+                
                 <br />
                 <br />
                 {loading ? (
@@ -123,7 +132,7 @@ const SignupForm = ({setSelectRole}) => {
             <br />
             <Typography variant="subtitle2" align="center" color="initial">
                 Already have an account?
-                <Link to='/login' className={classes.link}> Login</Link>
+                <Link to={routes.root} className={classes.link}> Login</Link>
             </Typography>
         </>
      );

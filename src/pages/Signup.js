@@ -3,9 +3,10 @@ import { Grid, Button, CircularProgress } from "@material-ui/core";
 import FormOuter from "../components/FormOuter";
 import SignupForm from "../components/SignupForm";
 import RoleForm from "../components/RoleForm";
-import { signUpWithGoogle } from "../redux/actionCreators/authActions";
+import { signUpWithGoogle } from "../redux/actionCreators/authActionsCreator";
 import { useDispatch } from "react-redux";
-import { errorAlert } from "../redux/actionCreators/alertActions";
+import { errorAlert } from "../redux/actionCreators/alertActionsCreator";
+
 const Signup = () => {
     const [selectRole, setSelectRole] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ const Signup = () => {
             }
         }
         setLoading(false);
-
+            
     }
 
     return (

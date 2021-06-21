@@ -13,8 +13,8 @@ import {
 import { useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { updateUser } from "../redux/actionCreators/authActions";
-import { userRegisteredAlert } from "../redux/actionCreators/alertActions";
+import { updateUser } from "../redux/actionCreators/authActionsCreator";
+import { successAlert } from "../redux/actionCreators/alertActionsCreator";
 const styles = makeStyles(() => ({
    
     button: {
@@ -41,11 +41,11 @@ const RoleForm = () => {
         setLoading(true);
 
         await updateUser(auth.userInfo.userId, { role });
-        userRegisteredAlert(dispatch, "Registered Successfully", "success");
+        successAlert(dispatch, "Registered Successfully", "success");
         
         setLoading(false);
 
-        history.push('/login');
+        history.push('/');
     }
 
     return ( 
